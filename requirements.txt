@@ -1,0 +1,3 @@
+requests==2.32.4
+quixstreams==3.21.0
+loguru
