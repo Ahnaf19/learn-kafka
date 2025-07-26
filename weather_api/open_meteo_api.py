@@ -4,7 +4,8 @@ def get_weather_data(url: str = "https://api.open-meteo.com/v1/forecast?", latit
     params={
         "latitude": latitude,
         "longitude": longitude,
-        "hourly": "temperature_2m",
+        # "hourly": "temperature_2m", # Uncomment if you want hourly data
+        "current": "temperature_2m", # Use "current" for current weather data
         "timezone": "auto"
     }
     response = requests.get(url, params=params)

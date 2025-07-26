@@ -37,7 +37,7 @@ def main():
             weather = get_weather_data()
             logger.debug(f'Got weather: {weather}\n')
 
-            kafka_msg = weather_topic.serialize(key='dhaka-weather', value=json.dumps(weather))
+            kafka_msg = weather_topic.serialize(key='dhaka-weather', value=weather)
 
             # Produce message to the topic
             logger.info(f'Produce event with key="{kafka_msg.key}" value="{kafka_msg.value}"')
@@ -52,4 +52,7 @@ def main():
         
         
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        pass   
