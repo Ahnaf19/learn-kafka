@@ -83,6 +83,12 @@ learn-kafka/
 
 ## Core Components
 
+```
+Simple Producer → weather_data_demo → Simple Consumer → Simple Streamer → weather_i18n → (can consume data!)
+      ↓                ↓                ↓                    ↓                  ↓
+[produces data]     [topic]      [consumes data] [transforms+streams data]  [stream topic]
+```
+
 ### Message Producer
 
 The `simple_producer.py` demonstrates:
