@@ -48,15 +48,40 @@ A comprehensive learning project for Apache Kafka using Python with QuixStreams,
    docker-compose up -d
    ```
 
-4. **Run the producer**:
+4. **Run the complete streaming pipeline**:
+
+   **Terminal 1 - Start the producer**:
 
    ```bash
    python producer/simple_producer.py
    ```
 
-5. **Run the consumer** (in another terminal):
+   **Terminal 2 - Monitor raw data (optional)**:
+
    ```bash
    python consumer/simple_consumer.py
+   ```
+
+   **Terminal 3 - Start the data streamer**:
+
+   ```bash
+   python streamer/simple_streamer.py
+   ```
+
+   **Terminal 4 - Monitor processed data**:
+
+   ```bash
+   python consumer/weather_i18n_consumer.py
+   ```
+
+   This creates the complete data flow: **Producer** → **weather_data_demo** → **Streamer** → **weather_i18n** → **Consumer**
+
+5. **Gracefully shutdown Kafka with Docker**:
+
+   `ctrl+c` to gracefully kill the python scripts. Then:
+
+   ```bash
+   docker-compose down
    ```
 
 ## Project Structure
@@ -66,9 +91,13 @@ learn-kafka/
 ├── producer/
 │   └── simple_producer.py      # QuixStreams-based message producer
 ├── consumer/
-│   └── simple_consumer.py      # Consumer with modular message processing
+│   ├── simple_consumer.py      # Consumer with modular message processing
+│   └── weather_i18n_consumer.py # Consumer for processed weather data
+├── streamer/
+│   └── simple_streamer.py      # StreamingDataFrame processor (weather data transformation)
 ├── utils/
-│   └── kafka_message_handler.py # Modular message handling classes
+│   ├── kafka_message_handler.py # Modular message handling classes
+│   └── temp_transform.py       # Temperature transformation utilities
 ├── docker-compose.yml          # Kafka broker setup
 ├── requirements.txt            # Python dependencies
 ├── SETUP.md                   # Detailed setup guide

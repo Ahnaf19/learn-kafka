@@ -129,24 +129,56 @@ kafka-topics.sh --list --bootstrap-server localhost:9092
 
 ## Running the Application
 
-### Producer
+### Complete Streaming Pipeline
+
+```bash
+# Terminal 1 - Start the producer
+python producer/simple_producer.py
+
+# Terminal 2 - Monitor raw data (optional)
+python consumer/simple_consumer.py
+
+# Terminal 3 - Start the data streamer
+python streamer/simple_streamer.py
+
+# Terminal 4 - Monitor processed data
+python consumer/weather_i18n_consumer.py
+```
+
+### Individual Components
+
+#### Producer
 
 ```bash
 python producer/simple_producer.py
 ```
 
-### Consumer
+#### Consumer
 
 ```bash
 python consumer/simple_consumer.py
+```
+
+#### Data Streamer
+
+```bash
+python streamer/simple_streamer.py
+```
+
+#### Weather Consumer
+
+```bash
+python consumer/weather_i18n_consumer.py
 ```
 
 ### End-to-End workflow
 
 1. Start Kafka: `docker-compose up -d`
 2. Run producer: `python producer/simple_producer.py`
-3. Run consumer: `python consumer/simple_consumer.py`
-4. Verify messages are being produced and consumed
+3. Run consumer (optional): `python consumer/simple_consumer.py`
+4. Run data streamer: `python streamer/simple_streamer.py`
+5. Run weather consumer: `python consumer/weather_i18n_consumer.py`
+6. Verify the complete pipeline: **Producer** → **weather_data_demo** → **Streamer** → **weather_i18n** → **Consumer**
 
 ## Development Notes
 
@@ -154,12 +186,19 @@ python consumer/simple_consumer.py
 
 ```
 learn-kafka/
-├── producer/           # Producer scripts
-├── consumer/           # Consumer scripts
-├── utils/              # Utility modules
-├── docker-compose.yml  # Kafka setup
-├── requirements.txt    # Python dependencies
-└── SETUP.md           # This file
+├── producer/                   # Producer scripts
+│   └── simple_producer.py
+├── consumer/                   # Consumer scripts
+│   ├── simple_consumer.py
+│   └── weather_i18n_consumer.py
+├── streamer/                   # Stream processing scripts
+│   └── simple_streamer.py
+├── utils/                      # Utility modules
+│   ├── kafka_message_handler.py
+│   └── temp_transform.py
+├── docker-compose.yml          # Kafka setup
+├── requirements.txt            # Python dependencies
+└── SETUP.md                   # This file
 ```
 
 ### Configuration Files
