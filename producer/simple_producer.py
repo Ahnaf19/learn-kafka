@@ -1,4 +1,3 @@
-import json
 import time
 from quixstreams import Application
 from loguru import logger
