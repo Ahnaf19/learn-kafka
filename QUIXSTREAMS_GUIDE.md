@@ -1120,8 +1120,6 @@ def seek_to_specific_offset():
 | **Development/Testing** | `earliest`             | Read from beginning              | Understanding data flow |
 | **Load Balancing**      | Same group             | Multiple readers, same bookmarks | Scaling consumer apps   |
 
-````
-
 ## Consumer Groups
 
 ### Consumer Groups (Team Management Analogy)
@@ -1130,23 +1128,23 @@ Think of **Consumer Groups** as **work teams** where each team member handles di
 
 #### 👥 **How Consumer Groups Work**
 
-| Concept | Technical | Team Analogy |
-|---------|-----------|--------------|
-| **Consumer Group** | Group of consumers with same group ID | A work team (e.g., "Data Processing Team") |
-| **Partition Assignment** | Each consumer gets specific partitions | Each team member gets specific tasks/files |
-| **Load Balancing** | Work is distributed automatically | Manager assigns tasks to available workers |
-| **Fault Tolerance** | If consumer fails, others take over | If team member is sick, others cover their work |
-| **Independent Teams** | Different groups process same data | Multiple teams can work on same project independently |
+| Concept                  | Technical                              | Team Analogy                                          |
+| ------------------------ | -------------------------------------- | ----------------------------------------------------- |
+| **Consumer Group**       | Group of consumers with same group ID  | A work team (e.g., "Data Processing Team")            |
+| **Partition Assignment** | Each consumer gets specific partitions | Each team member gets specific tasks/files            |
+| **Load Balancing**       | Work is distributed automatically      | Manager assigns tasks to available workers            |
+| **Fault Tolerance**      | If consumer fails, others take over    | If team member is sick, others cover their work       |
+| **Independent Teams**    | Different groups process same data     | Multiple teams can work on same project independently |
 
 ### Consumer Group Configuration
 
-| Option                          | Description         | Default Value | Example              | Team Analogy           |
-| ------------------------------- | ------------------- | ------------- | -------------------- | ---------------------- |
-| `consumer_group`                | Consumer group ID   | Required      | `"processing-team"`  | Team name badge        |
-| `session_timeout_ms`            | Session timeout     | `10000`       | `30000`              | "Check-in" frequency   |
-| `heartbeat_interval_ms`         | Heartbeat frequency | `3000`        | `1000`               | "I'm alive" signals    |
-| `max_poll_interval_ms`          | Max processing time | `300000`      | `60000`              | Max time per task      |
-| `partition_assignment_strategy` | Assignment strategy | `"range"`     | `"roundrobin"`       | How to divide work     |
+| Option                          | Description         | Default Value | Example             | Team Analogy         |
+| ------------------------------- | ------------------- | ------------- | ------------------- | -------------------- |
+| `consumer_group`                | Consumer group ID   | Required      | `"processing-team"` | Team name badge      |
+| `session_timeout_ms`            | Session timeout     | `10000`       | `30000`             | "Check-in" frequency |
+| `heartbeat_interval_ms`         | Heartbeat frequency | `3000`        | `1000`              | "I'm alive" signals  |
+| `max_poll_interval_ms`          | Max processing time | `300000`      | `60000`             | Max time per task    |
+| `partition_assignment_strategy` | Assignment strategy | `"range"`     | `"roundrobin"`      | How to divide work   |
 
 ### Single Consumer Group (Team Load Balancing)
 
@@ -1185,7 +1183,7 @@ def team_load_balancing_example():
         print("⚖️ Load balancing happens automatically")
 
         # Both workers run simultaneously, handling different partitions
-````
+```
 
 ### Multiple Consumer Groups (Independent Teams)
 
