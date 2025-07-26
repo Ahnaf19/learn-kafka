@@ -1,144 +1,186 @@
-# Kafka Learning Project Setup and Installation Guide
+# Project Setup Guide
+
+## Table of Contents
+
+- [Prerequisites](#prerequisites)
+- [Environment Setup](#environment-setup)
+- [Installing Dependencies](#installing-dependencies)
+- [Python Path Configuration](#python-path-configuration)
+- [Docker Setup](#docker-setup)
+- [Running the Application](#running-the-application)
+- [Verification](#verification)
+- [Troubleshooting](#troubleshooting)
 
 ## Prerequisites
 
-1. **Python 3.8+** installed on your system
-2. **Apache Kafka** running locally or accessible remotely
-3. **Git** for version control
+Before setting up the project, ensure you have the following installed:
 
-## Quick Start
+- Python 3.8+
+- Docker and Docker Compose or docker desktop
+- Git (for cloning the repository)
 
-### 1. Clone and Setup
+## Environment Setup
+
+### Option 1: Using Python venv
 
 ```bash
-# Navigate to project directory
-cd learn-kafka
-
 # Create virtual environment
-python -m venv venv
+# Windows
+python -m venv kafka-env
+
+# macOS/Linux
+python3 -m venv kafka-env
 
 # Activate virtual environment
-# On Windows:
-venv\Scripts\activate
-# On macOS/Linux:
-source venv/bin/activate
+# Windows (Command Prompt)
+kafka-env\Scripts\activate
 
-# Install dependencies
+# Windows (PowerShell)
+kafka-env\Scripts\Activate.ps1
+
+# macOS/Linux
+source kafka-env/bin/activate
+```
+
+### Option 2: Using Conda
+
+```bash
+# Create conda environment
+conda create -n kafka-env python=3.11
+
+# Activate conda environment
+# Windows/macOS/Linux
+conda activate kafka-env
+```
+
+## Installing Dependencies
+
+After activating your virtual environment:
+
+```bash
+# Install project dependencies
 pip install -r requirements.txt
+
+# Verify installation
+pip list
 ```
 
-### 2. Configure Environment
+## Python Path Configuration
+
+To ensure proper module imports, add the project root to your Python path:
 
 ```bash
-# Copy environment template
-cp .env.example .env
+# linux or macOS
+export PYTHONPATH=.
 
-# Edit .env file with your Kafka configuration
-# Update KAFKA_BOOTSTRAP_SERVERS if needed
+# windows
+$env:PYTHONPATH = "." # powershell
+set PYTHONPATH=. # cmd
 ```
 
-### 3. Start Kafka (if running locally)
+## Docker Setup
 
-#### Using Kafka Binary:
+### Starting Kafka
 
-```bash
-# Start Zookeeper
-bin\windows\zookeeper-server-start.bat config\zookeeper.properties
-
-# Start Kafka Server
-bin\windows\kafka-server-start.bat config\server.properties
-
-# Create topic (optional - will be created automatically)
-bin\windows\kafka-topics.bat --create --topic learn-kafka-topic --bootstrap-server localhost:9092 --partitions 3 --replication-factor 1
-```
-
-#### Using Docker:
+The project uses Docker Compose to run Kafka. Start the Kafka broker:
 
 ```bash
-# Create docker-compose.yml and run
+# Start Kafka in detached mode
 docker-compose up -d
+
+# View logs (optional)
+docker-compose logs -f
+
+# Check status
+docker-compose ps
+
+# Shutdown Kafka
+docker-compose down
 ```
 
-### 4. Run the Project
+### Kafka Services
+
+The Docker setup provides:
+
+- **Kafka Broker**: `localhost:9092`
+- **Internal networking**: `host.docker.internal:9092`
+
+### Creating Topics (Optional)
+
+> [!WARNING]
+> Docker image `apache/kafka:latest` is a minimal base image and does not include CLI tools like `kafka-topics.sh`. So the below command will not work, try with `bitnami/kafka` or `confluentinc/cp-kafka`
+
+Topics will be created automatically in python scripts, but you can create them manually:
 
 ```bash
-# Run main application
-python main.py
+# Access Kafka container
+docker exec -it broker bash
 
-# Or install and run as package
-pip install -e .
-learn-kafka
+# Create topic
+kafka-topics.sh --create \
+  --topic weather_data_demo \
+  --bootstrap-server localhost:9092 \
+  --partitions 3 \
+  --replication-factor 1
+
+# List topics
+kafka-topics.sh --list --bootstrap-server localhost:9092
 ```
 
-## Project Structure
+## Running the Application
+
+### Producer
+
+```bash
+python producer/simple_producer.py
+```
+
+### Consumer
+
+```bash
+python consumer/simple_consumer.py
+```
+
+### End-to-End workflow
+
+1. Start Kafka: `docker-compose up -d`
+2. Run producer: `python producer/simple_producer.py`
+3. Run consumer: `python consumer/simple_consumer.py`
+4. Verify messages are being produced and consumed
+
+## Development Notes
+
+### Project Structure
 
 ```
 learn-kafka/
-├── producer/           # Kafka producer examples
-├── consumer/           # Kafka consumer examples
-├── kafka_streams/      # Kafka streams examples
-├── config/             # Configuration files
-├── utils/              # Utility functions
-├── main.py            # Main entry point
-├── requirements.txt   # Python dependencies
-├── pyproject.toml     # Project configuration
-└── .env.example       # Environment variables template
+├── producer/           # Producer scripts
+├── consumer/           # Consumer scripts
+├── utils/              # Utility modules
+├── docker-compose.yml  # Kafka setup
+├── requirements.txt    # Python dependencies
+└── SETUP.md           # This file
 ```
 
-## Development Setup
+### Configuration Files
 
-### Install Development Dependencies
+- `docker-compose.yml`: Kafka broker configuration
+- `requirements.txt`: Python package dependencies
+- Environment variables can be set in `.env` file
+
+### Useful Commands
 
 ```bash
-pip install -e ".[dev]"
+# Stop all services
+docker-compose down
+
+# View resource usage
+docker stats
+
+# Clean up Docker
+docker system prune -f
+
+# Reset Python environment
+pip freeze | xargs pip uninstall -y
+pip install -r requirements.txt
 ```
-
-### Code Formatting and Linting
-
-```bash
-# Format code
-black .
-
-# Sort imports
-isort .
-
-# Lint code
-flake8 .
-
-# Run tests
-pytest
-```
-
-## Troubleshooting
-
-### Common Issues:
-
-1. **Cannot connect to Kafka**
-
-   - Ensure Kafka is running on the configured port
-   - Check KAFKA_BOOTSTRAP_SERVERS in .env file
-
-2. **Topic not found**
-
-   - Topics will be created automatically
-   - Or create manually using kafka-topics command
-
-3. **Permission errors**
-   - Ensure proper file permissions
-   - Run with appropriate user privileges
-
-### Environment Variables
-
-All configuration is managed through environment variables. See `.env.example` for all available options.
-
-### Logs
-
-The application uses colored logging. Check console output for debugging information.
-
-## Next Steps
-
-1. Implement producer examples in `producer/`
-2. Implement consumer examples in `consumer/`
-3. Add Kafka streams processing in `kafka_streams/`
-4. Experiment with different serialization formats
-5. Add error handling and monitoring
